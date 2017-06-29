@@ -1,0 +1,16 @@
+# Ignore module
+/module
+
+# Ignore dependencies
+/node_modules
+/vendor
+
+# Ignore reports
+/reports
+
+# Ignore composer.lock
+/composer.lock
+
+# Ignore sublime files
+/*.sublime-project
+/*.sublime-workspace

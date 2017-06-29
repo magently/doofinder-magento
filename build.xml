@@ -1,0 +1,46 @@
+<project name="Doofinder" default="build">
+
+  <property environment="env"/>
+
+  <target name="install">
+    <echo>Installing...</echo>
+    <exec executable="npm" failonerror="true">
+      <arg line="install ." />
+    </exec>
+    <exec executable="composer" failonerror="true">
+      <arg line="install" />
+    </exec>
+    <echo>Installing... Done</echo>
+  </target>
+
+  <target name="build" depends="install">
+    <echo>Building...</echo>
+    <echo>Nothing to build</echo>
+    <echo>Building... Done</echo>
+  </target>
+
+  <target name="lint">
+    <echo>Linting...</echo>
+    <exec executable="npm" failonerror="true">
+      <arg line="--no-color run lint" />
+    </exec>
+    <exec executable="composer" failonerror="true">
+      <arg line="run-script --dev lint" />
+    </exec>
+    <echo>Linting... Done</echo>
+  </target>
+
+  <target name="test-functional">
+    <echo>Functional testing...</echo>
+    <exec executable="composer" failonerror="true">
+      <arg line="run-script --dev test-functional" />
+    </exec>
+    <echo>Functional testing... Done</echo>
+  </target>
+
+  <target name="work" depends="install">
+    <echo>Working...</echo>
+    <echo>Working... Done</echo>
+  </target>
+
+</project>

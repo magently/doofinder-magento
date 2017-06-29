@@ -1,0 +1,42 @@
+{
+    "name": "doofinder/doofinder-magento-environment",
+    "description": "Environment for Doofinder module for Magento",
+    "require": {
+        "php": "~5.5.0|~5.6.0|~7.0.0"
+    },
+    "require-dev": {
+        "magento/marketplace-eqp": "^1.0",
+        "phpmd/phpmd": "@stable",
+        "sebastian/phpcpd": "^2.0",
+        "wimg/php-compatibility": "dev-master#7ca35cc",
+        "behat/behat": "^3.3",
+        "behat/mink": "^1.7",
+        "behat/mink-extension": "^2.2",
+        "behat/mink-goutte-driver": "^1.2",
+        "phpunit/phpunit": "^5.7"
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://repo.magento.com/"
+        }
+    ],
+    "scripts": {
+        "post-install-cmd": "phpcs --config-set installed_paths ../../wimg/php-compatibility",
+        "post-update-cmd": [
+            "phpcs --config-set installed_paths ../../wimg/php-compatibility",
+            "phpcs --config-set ignore_errors_on_exit 1",
+            "phpcs --config-set ignore_warnings_on_exit 1"
+        ],
+        "lint": [
+            "@phpcs",
+            "@phpmd",
+            "@phpcpd"
+        ],
+        "phpcs": "phpcs --ignore=module/lib --standard=phpcs.ruleset.xml --extensions=php,phtml --report=checkstyle --report-file=./reports/phpcs.checkstyle.xml ./module",
+        "phpmd": "phpmd ./module xml phpmd.ruleset.xml --exclude module/lib/ --reportfile ./reports/phpmd.pmd.xml || [ $? -eq 2 ]",
+        "phpcpd": "phpcpd --exclude=lib --exclude=sql --log-pmd=./reports/phpcpd.cpd.xml --min-tokens=50 --min-lines=5 -n -q ./module || true",
+        "test-functional": "@behat",
+        "behat": "behat -c module/tests/behat/behat.yml -f junit -o ./reports/behat || true"
+    }
+}

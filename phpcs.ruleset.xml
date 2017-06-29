@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset name="Magento">
+    <description>Magento coding standard.</description>
+
+    <rule ref="./vendor/magento/marketplace-eqp/MEQP1" />
+
+    <config name="testVersion" value="5.4-6.0" />
+    <rule ref="./vendor/wimg/php-compatibility">
+    	<exclude name="PHPCompatibility.PHP.DefaultTimezoneRequired" />
+    </rule>
+</ruleset>
