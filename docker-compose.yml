@@ -2,24 +2,25 @@ version: '2'
 
 services:
   app:
-    image: registry.magently.com/magently/magento
+    image: magently/magento
     ports:
       - "${EXTERNAL_HTTP_PORT}80"
     links:
       - db
     volumes:
-      - ./module:/module
       - ./:/app
+      - ./module:/app/packages/doofinder/doofinder-magento
     environment:
-      - MODULE_PATH=/module
       - MYSQL_HOST=db
       - MYSQL_USER=root
       - MYSQL_PASSWORD=secret
       - MYSQL_DATABASE=db
-      - MAGENTO_ADMIN_EMAIL=admin@example.com
+    extra_hosts:
+      - "magento.localhost:127.0.0.1"
 
   db:
     image: mysql:5.6
     environment:
       - MYSQL_DATABASE=db
       - MYSQL_ROOT_PASSWORD=secret
+
