@@ -87,7 +87,7 @@ node {
             sh 'docker-compose -f docker-compose.yml pull'
             sh 'docker-compose -f docker-compose.yml build --pull'
             sh 'EXTERNAL_HTTP_PORT="" docker-compose -f docker-compose.yml up -d'
-            sh 'docker-compose -f docker-compose.yml exec -T app bash -c \'dockerize -wait http://localhost -wait tcp://$MYSQL_HOST:3306 -timeout 60s && cd $APPLICATION_PATH && gosu $APPLICATION_USER ant -emacs test-functional\''
+            sh 'docker-compose -f docker-compose.yml exec -T app bash -c \'dockerize -wait http://localhost -wait tcp://$MYSQL_HOST:3306 -timeout 300s && cd $APPLICATION_PATH && gosu $APPLICATION_USER ant -emacs test-functional\''
         } finally {
             sh 'docker-compose -f docker-compose.yml down -v --remove-orphans'
         }
