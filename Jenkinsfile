@@ -13,7 +13,7 @@ node {
             extensions: [
                 [
                     $class: 'RelativeTargetDirectory',
-                    relativeTargetDir: 'module'
+                    relativeTargetDir: 'packages/doofinder/doofinder-magento'
                 ], 
                 [
                     $class: 'CleanCheckout'
@@ -28,6 +28,8 @@ node {
                 ]
             ]
         ])
+        
+        sh 'ln -s packages/doofinder/doofinder-magento module'
     }
 
     stage('Collect open tasks') {

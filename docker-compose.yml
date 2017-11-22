@@ -9,7 +9,6 @@ services:
       - db
     volumes:
       - ./:/app
-      - ./module:/app/packages/doofinder/doofinder-magento
     environment:
       - MYSQL_HOST=db
       - MYSQL_USER=root
