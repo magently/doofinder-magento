@@ -38,10 +38,10 @@
         "phpcs": [
             "phpcs --config-set ignore_errors_on_exit 1",
             "phpcs --config-set ignore_warnings_on_exit 1",
-            "phpcs --ignore=module/lib --standard=phpcs.ruleset.xml --extensions=php,phtml --report=checkstyle --report-file=./reports/phpcs.checkstyle.xml ./module"
+            "phpcs --ignore=packages/*/*/lib --standard=phpcs.ruleset.xml --extensions=php,phtml --report=checkstyle --report-file=./reports/phpcs.checkstyle.xml ./packages"
         ],
-        "phpmd": "phpmd ./module xml phpmd.ruleset.xml --exclude module/lib/ --reportfile ./reports/phpmd.pmd.xml || [ $? -eq 2 ]",
-        "phpcpd": "phpcpd --exclude=lib --exclude=sql --log-pmd=./reports/phpcpd.cpd.xml --min-tokens=50 --min-lines=5 -n -q ./module || true",
+        "phpmd": "phpmd ./packages xml phpmd.ruleset.xml --exclude packages/*/*/lib/ --reportfile ./reports/phpmd.pmd.xml || [ $? -eq 2 ]",
+        "phpcpd": "phpcpd --exclude=lib --exclude=sql --log-pmd=./reports/phpcpd.cpd.xml --min-tokens=50 --min-lines=5 -n -q ./packages || true",
         "test-functional": "@behat",
         "behat": "behat -c module/tests/behat/behat.yml -f junit -o ./reports/behat || true"
     }
