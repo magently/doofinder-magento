@@ -1,0 +1,24 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Sync') {
+            steps {
+                deleteDir()
+                sshagent(credentials: ['jenkins']) {
+                    sh 'git clone --mirror ${GITHUB_REPO_CLIENT} .'
+                    sh 'git push ${GITHUB_REPO_FORK} master'
+                    sh 'git push ${GITHUB_REPO_FORK} develop'
+                    sh 'git push ${GERRIT_REPO} master'
+                    sh 'git push ${GERRIT_REPO} develop'
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            deleteDir()
+        }
+    }
+}

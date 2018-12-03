@@ -1,0 +1,22 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Push') {
+            steps {
+                deleteDir()
+                sh 'git init'
+                sshagent(credentials: ['jenkins']) {
+                    sh 'git fetch ${GERRIT_REPO} ${GERRIT_BRANCH}'
+                    sh 'git push ${GITHUB_REPO_FORK} FETCH_HEAD:refs/heads/${GERRIT_BRANCH}'
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            deleteDir()
+        }
+    }
+}
