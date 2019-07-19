@@ -118,20 +118,29 @@ class Doofinder_Feed_Model_CatalogSearch_Resource_Fulltext extends Mage_CatalogS
 
             if (!empty($results)) {
                 $data = array();
+                $productIds = array();
+                $productSkus = array();
                 $relevance = count($results);
+
+                $attrToFiler = $this->getAttributeToFiler();
 
                 // Filter out ids to only those that exists in db
                 $productCollection = Mage::getModel('catalog/product')->getCollection()
-                    ->addAttributeToSelect('entity_id')
-                    ->addAttributeToFilter('entity_id', array('in' => $results))
+                    ->addAttributeToSelect(['entity_id', 'sku'])
+                    ->addAttributeToFilter($attrToFiler, array('in' => $results))
                     ->load();
                 foreach ($productCollection as $product) {
                     $productIds[] = $product->getId();
+                    $productSkus[] = $product->getSku();
                 }
 
-                $results = array_intersect($results, $productIds);
+                $results = $this->getProductIdsResult($attrToFiler, $results, $productIds, $productSkus);
 
-                foreach ($results as $productId) {
+                if (empty($results)) {
+                    throw new \Exception('XML feed is out of date');
+                }
+
+                foreach ($productIds as $productId) {
                     $data[] = array(
                         'query_id'   => $query->getId(),
                         'product_id' => $productId,
@@ -142,7 +151,7 @@ class Doofinder_Feed_Model_CatalogSearch_Resource_Fulltext extends Mage_CatalogS
                 $adapter->insertOnDuplicate($this->getTable('catalogsearch/result'), $data);
 
                 // Set search results
-                $this->setResults($results);
+                $this->setResults($productIds);
             }
 
             $query->setIsProcessed(1);
@@ -152,6 +161,53 @@ class Doofinder_Feed_Model_CatalogSearch_Resource_Fulltext extends Mage_CatalogS
         }
 
         return $this;
+    }
+
+    /**
+     * Get DB product field which is set as ID in XML feed
+     *
+     * @return string
+     * @throws Mage_Core_Model_Store_Exception
+     */
+    private function getAttributeToFiler()
+    {
+        $idFeed = Mage::getStoreConfig('doofinder_cron/attributes_mapping/id', Mage::app()->getStore());
+        switch ($idFeed) {
+            case 'sku':
+                return 'sku';
+
+            default:
+                return 'entity_id';
+        }
+    }
+
+    /**
+     * Get intersection of API array with DB array but always as ID of product
+     *
+     * @param string $attrToFiler
+     * @param array $results Results from API
+     * @param array $productIds Results from DB with product IDs
+     * @param array $productSkus Results from DB with product SKUs
+     *
+     * @return array Product IDs
+     */
+    private function getProductIdsResult($attrToFiler, array $results, array $productIds, array $productSkus)
+    {
+        switch ($attrToFiler) {
+            case 'sku':
+                $results = array_intersect($results, $productSkus);
+                // Check whether index of productIds array exists in results array,
+                // if not, delete it from productIds array
+                for ($i = count($productIds) - 1; $i >= 0; --$i) {
+                    if (!isset($results[$i])) {
+                        unset($productIds[$i]);
+                    }
+                }
+                return $productIds;
+
+            default:
+                return array_intersect($results, $productIds);
+        }
     }
 
     /**
@@ -166,7 +222,7 @@ class Doofinder_Feed_Model_CatalogSearch_Resource_Fulltext extends Mage_CatalogS
         $relevance = count($results);
 
         foreach ($results as $productId) {
-                $data[$productId] = $relevance--;
+            $data[$productId] = $relevance--;
         }
 
         $this->_foundData = $data;
