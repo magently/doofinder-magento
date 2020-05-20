@@ -775,9 +775,8 @@ class Doofinder_Feed_Model_Generator extends Varien_Object
         $map = Mage::getStoreConfig('doofinder_cron/attributes_mapping', $this->getStore());
         $additional = array();
         if (isset($map['additional'])) {
-            // @codingStandardsIgnoreStart
-            $additional = unserialize($map['additional']);
-            // @codingStandardsIgnoreEnd
+            $additional = Mage::getSingleton('Zend_Serializer_Adapter_PhpSerialize')
+                ->unserialize($map['additional']);
         }
 
         unset($map['additional']);
